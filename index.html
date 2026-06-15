@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bolão da Copa | Firebase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">🏆</div>
+        <div>
+          <strong>Bolão da Copa</strong>
+          <span>Firebase • Login real • Ranking • V3</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-view="dashboard">Início</button>
+        <button class="nav-item" data-view="betting">Apostar</button>
+        <button class="nav-item" data-view="live">Tempo real</button>
+        <button class="nav-item" data-view="finished">Encerrados</button>
+        <button class="nav-item" data-view="ranking">Ranking</button>
+        <button class="nav-item" data-view="rules">Regras</button>
+        <button class="nav-item admin-only hidden" data-view="admin">Admin</button>
+      </nav>
+
+      <div class="sidebar-card">
+        <span class="eyebrow">Versão real</span>
+        <strong>Banco online — V3 Diagnóstico</strong>
+        <p>Se você não está vendo “V3 Diagnóstico”, o GitHub Pages ainda está carregando arquivo antigo ou cache.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn">☰</button>
+        <div>
+          <h1 id="pageTitle">Início</h1>
+          <p id="pageSubtitle">Bolão conectado ao Firebase.</p>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="themeBtn">🌙</button>
+          <button class="ghost-btn hidden" id="logoutBtn">Sair</button>
+          <button class="primary-btn" id="openAuthBtn">Entrar</button>
+        </div>
+      </header>
+
+      <section class="auth-gate" id="setupGate">
+        <div class="hero-card">
+          <span class="badge">Configuração necessária</span>
+          <h2>Conecte o Firebase para ativar o site.</h2>
+          <p>Abra o arquivo <strong>firebase-config.js</strong> e cole a configuração do seu app Web do Firebase. Depois habilite Authentication e Firestore no console.</p>
+          <div class="hero-actions">
+            <a class="primary-btn large" href="TUTORIAL_FIREBASE.md" target="_blank" rel="noreferrer">Abrir tutorial</a>
+          </div>
+          <div class="demo-note">Enquanto a configuração estiver com “COLE_AQUI”, o app não inicia.</div>
+        </div>
+      </section>
+
+      <section class="auth-gate hidden" id="authGate">
+        <div class="hero-card">
+          <span class="badge">Online</span>
+          <h2>Entre no bolão para apostar e ver o ranking em tempo real.</h2>
+          <p>Cadastro e login reais usando Firebase Authentication. Dados salvos no Cloud Firestore.</p>
+          <div class="hero-actions">
+            <button class="primary-btn large" id="heroAuthBtn">Criar conta / Entrar</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="content hidden" id="appContent">
+        <div class="view" id="view-dashboard"></div>
+        <div class="view hidden" id="view-betting"></div>
+        <div class="view hidden" id="view-live"></div>
+        <div class="view hidden" id="view-finished"></div>
+        <div class="view hidden" id="view-ranking"></div>
+        <div class="view hidden" id="view-rules"></div>
+        <div class="view hidden" id="view-admin"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal hidden" id="authModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close="auth"></div>
+    <div class="modal-card">
+      <button class="modal-close" data-close="auth">×</button>
+      <div class="modal-head">
+        <span class="badge">Acesso real</span>
+        <h2>Entrar no bolão</h2>
+        <p>Use email e senha. A conta será criada no Firebase Authentication.</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-auth-tab="login">Login</button>
+        <button class="tab" data-auth-tab="register">Cadastro</button>
+      </div>
+
+      <form id="loginForm" class="auth-form">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="seuemail@email.com" required />
+        <label>Senha</label>
+        <input type="password" name="password" placeholder="Sua senha" required />
+        <button class="primary-btn full" type="submit">Entrar</button>
+      </form>
+
+      <form id="registerForm" class="auth-form hidden">
+        <label>Nome no ranking</label>
+        <input type="text" name="name" placeholder="Seu nome" required maxlength="24" />
+        <label>Email</label>
+        <input type="email" name="email" placeholder="seuemail@email.com" required />
+        <label>Senha</label>
+        <input type="password" name="password" placeholder="Mínimo 6 caracteres" required minlength="6" />
+        <button class="primary-btn full" type="submit">Criar conta</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

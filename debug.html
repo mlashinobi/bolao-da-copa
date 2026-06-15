@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagnóstico Firebase - Bolão</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="content" style="max-width: 920px; margin: 0 auto;">
+    <div class="card">
+      <span class="badge">Diagnóstico</span>
+      <h1>Teste de conexão Firebase</h1>
+      <p>Esta página testa se o arquivo <strong>firebase-config.js</strong>, o Firebase Auth e o Firestore estão funcionando.</p>
+      <button class="primary-btn" id="runBtn">Rodar diagnóstico</button>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h3>Resultado</h3>
+      <pre id="output" style="white-space:pre-wrap; line-height:1.6; color:var(--text)">Clique em “Rodar diagnóstico”.</pre>
+    </div>
+  </main>
+
+  <script type="module">
+    import { isFirebaseConfigured, auth, db } from "./firebase-service.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { collection, getDocs, limit, query } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const out = document.querySelector("#output");
+    const log = (msg) => out.textContent += "\n" + msg;
+
+    document.querySelector("#runBtn").addEventListener("click", async () => {
+      out.textContent = "Iniciando diagnóstico...";
+      try {
+        log(isFirebaseConfigured ? "✅ firebase-config.js preenchido." : "❌ firebase-config.js ainda tem COLE_AQUI ou está incompleto.");
+        if (!isFirebaseConfigured) return;
+
+        log("✅ Firebase inicializado.");
+        log("Auth domain: " + auth.config.authDomain);
+
+        await new Promise(resolve => {
+          const unsub = onAuthStateChanged(auth, user => {
+            log(user ? "✅ Usuário logado: " + user.email : "⚠️ Nenhum usuário logado nesta aba. Isso é normal se você ainda não entrou.");
+            unsub();
+            resolve();
+          });
+        });
+
+        const snap = await getDocs(query(collection(db, "matches"), limit(1)));
+        log("✅ Firestore respondeu. Jogos encontrados no teste: " + snap.size);
+        log("\nSe chegou até aqui, a conexão básica está funcionando.");
+      } catch (error) {
+        log("❌ ERRO: " + (error.code || error.message));
+        log("Mensagem completa: " + error.message);
+        log("\nCorreções comuns:");
+        log("1. Ative Authentication > Email/Password.");
+        log("2. Crie o Firestore Database.");
+        log("3. Publique as regras do arquivo firestore.rules.");
+        log("4. Adicione seu domínio em Authentication > Settings > Authorized domains.");
+        log("5. Não abra via file://; use GitHub Pages ou Live Server.");
+      }
+    });
+  </script>
+</body>
+</html>
